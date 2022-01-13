@@ -1,0 +1,6 @@
+name: ADuel
+main: fr.asvadia.aduel.Main
+version: 1.0
+author: SkyfightTV
+commands:
+  duel:

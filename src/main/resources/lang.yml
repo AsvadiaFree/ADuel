@@ -1,0 +1,7 @@
+# Variables:
+# %player%: player who send duel
+AcceptInvite: "Le joueur %player a accepté votre demande en duel !"
+DuelStart: "Le duel commence !"
+DuelCancel: "Le duel est annulé !"
+DuelWin: "Vous avez gagné le duel !"
+DuelLose: "Vous avez perdu le duel !"
