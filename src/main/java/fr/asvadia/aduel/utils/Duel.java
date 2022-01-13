@@ -1,12 +1,17 @@
 package fr.asvadia.aduel.utils;
 
 import fr.asvadia.aduel.Main;
-import fr.asvadia.aduel.modules.DuelParams;
+import fr.asvadia.aduel.modules.*;
 import fr.asvadia.aduel.utils.file.FileManager;
 import fr.asvadia.aduel.utils.file.Files;
+import fr.asvadia.api.bukkit.menu.inventory.AInventoryGUI;
+import fr.skyfighttv.simpleitem.ItemCreator;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -15,7 +20,11 @@ import java.util.*;
 public class Duel {
     public static HashMap<Player, ItemStack[]> playerInventory = new HashMap<>();
     public static HashMap<Player, Duel> duelPlayers = new HashMap<>();
-    public static List<DuelParams> duelParams = new ArrayList<>();
+    public static HashMap<Player, List<Player>> duelInvitations = new HashMap<>();
+    private static final List<DuelParams> duelParams = Arrays.asList(new NoKnockback(), new VKnockback(), new NoFall(), new NoFood(), new TpPvP(), new NoFire(), new NaturalRegen(), new OneShoot());
+    private static final int[] duelParamsSlot = new int[]{15, 16, 24, 25, 33, 34, 42, 43};
+    private static AInventoryGUI.Builder inventory;
+    private final List<DuelParams> duelP;
     private boolean active;
     private DuelKits kit;
     private final HashMap<Player, Player> PLAYERS;
@@ -25,6 +34,7 @@ public class Duel {
         this.active = false;
         this.kit = DuelKits.values()[0];
         this.PLAYERS = new HashMap<>();
+        this.duelP = new ArrayList<>(duelParams);
 
         YamlConfiguration lang = FileManager.getValues().get(Files.Lang);
 
@@ -32,9 +42,81 @@ public class Duel {
 
         this.PLAYERS.put(p1, p2);
         this.PLAYERS.put(p2, p1);
-        // set duel and remove invitation
+        duelInvitations.get(p1).remove(p2);
         duelPlayers.put(p1, this);
         duelPlayers.put(p2, this);
+
+        YamlConfiguration config = FileManager.getValues().get(Files.Config);
+
+        if (inventory == null) {
+            AInventoryGUI.Builder inv = AInventoryGUI.builder()
+                    .title(lang.getString("GUI.Title"))
+                    .size(54);
+
+            int slot = config.getInt("GUI.Items.On.Slot");
+            inv.item(slot, new ItemCreator(Material.matchMaterial(config.getString("GUI.Items.On.Material")))
+                    .setName(lang.getString("GUI.Items.On.Title"))
+                    .setLore(lang.getStringList("GUI.Items.On.Lore"))
+                    .toItemStack());
+            inv.clickButton(slot, (player, aInventoryGUI, clickType) -> {
+                if (Duel.getDuelPlayers().containsKey(player)
+                        && Duel.getDuelPlayers().get(player) != null)
+                    Duel.getDuelPlayers().get(player).start();
+                player.closeInventory();
+            });
+
+            slot = config.getInt("GUI.Items.Off.Slot");
+            inv.item(slot, new ItemCreator(Material.matchMaterial(config.getString("GUI.Items.Off.Material")))
+                    .setName(lang.getString("GUI.Items.Off.Title"))
+                    .setLore(lang.getStringList("GUI.Items.Off.Lore"))
+                    .toItemStack());
+            inv.clickButton(slot, (player, aInventoryGUI, clickType) -> {
+                if (Duel.getDuelPlayers().containsKey(player)
+                        && Duel.getDuelPlayers().get(player) != null)
+                    Duel.getDuelPlayers().get(player).end(null);
+                player.closeInventory();
+            });
+
+            for (DuelKits k : DuelKits.values()) {
+                ItemCreator item = new ItemCreator(k.getIcon())
+                        .addItemFlag(ItemFlag.HIDE_ENCHANTS)
+                        .setName(lang.getString("Kits." + k.getName().toLowerCase() + ".Title"))
+                        .setLore(lang.getStringList("Kits." + k.getName().toLowerCase() + ".Lore"));
+                if (k == DuelKits.values()[0])
+                    item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+
+                inv.item(k.getSlot(), item.toItemStack());
+                inv.clickButton(k.getSlot(), (player, aInventoryGUI, clickType) -> {
+                   if (Duel.getDuelPlayers().containsKey(player)
+                           && Duel.getDuelPlayers().get(player) != null) {
+                       int s  = Duel.getDuelPlayers().get(player).getKit().getSlot();
+                       Objects.requireNonNull(aInventoryGUI.getInventory().getItem(s))
+                               .removeEnchantment(Enchantment.DURABILITY);
+                       Duel.getDuelPlayers().get(player).setKit(k);
+                       Objects.requireNonNull(aInventoryGUI.getInventory().getItem(k.getSlot()))
+                               .addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+                   }
+                });
+            }
+
+            for (DuelParams duelParams : Duel.getDuelParams()) {
+                slot = duelParamsSlot[Duel.getDuelParams().indexOf(duelParams)];
+                ItemCreator item = new ItemCreator(duelParams.mDisable);
+                if (Duel.getDuelPlayers().get(p1).getDuelP().get(Duel.getDuelParams().indexOf(duelParams)).active)
+                    item = new ItemCreator(duelParams.mEnable);
+                item.setName(duelParams.getTitle())
+                        .setLore(duelParams.getLore());
+                inv.item(slot, item.toItemStack());
+                int finalSlot = slot;
+                inv.clickButton(slot, (player, aInventoryGUI, clickType) -> {
+                   Duel.getDuelPlayers().get(p1).getDuelP()
+                           .get(Duel.getDuelParams().indexOf(duelParams))
+                           .onClick(finalSlot, player, aInventoryGUI, clickType);
+                });
+            }
+
+            inventory = inv;
+        }
 
         new BukkitRunnable() {
             @Override
@@ -99,6 +181,10 @@ public class Duel {
         });
     }
 
+    public static void openDuelInv(Player p) {
+        p.openInventory(inventory.build().getInventory());
+    }
+
     public static HashMap<Player, ItemStack[]> getPlayerInventory() {
         return playerInventory;
     }
@@ -109,10 +195,6 @@ public class Duel {
 
     public static List<DuelParams> getDuelParams() {
         return duelParams;
-    }
-
-    public static void setDuelParams(List<DuelParams> duelParams) {
-        Duel.duelParams = duelParams;
     }
 
     public boolean isActive() {
@@ -142,4 +224,14 @@ public class Duel {
     public void setWinner(Player winner) {
         this.winner = winner;
     }
+
+    public static HashMap<Player, List<Player>> getDuelInvitations() {
+        return duelInvitations;
+    }
+
+    public List<DuelParams> getDuelP() {
+        return duelP;
+    }
+
+
 }

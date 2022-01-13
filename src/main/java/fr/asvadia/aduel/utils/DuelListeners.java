@@ -32,7 +32,7 @@ public class DuelListeners implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            Duel.duelParams.forEach(duelParams -> duelParams.onDamage(event));
+            Duel.getDuelPlayers().get(p).getDuelP().forEach(duelParams -> duelParams.onDamage(event));
             if (p.getHealth() - event.getFinalDamage() <= 0.0 && !event.isCancelled())
                 Duel.duelPlayers.get(p).end(Duel.duelPlayers.get(p).getPLAYERS().get(p));
         }
@@ -49,7 +49,7 @@ public class DuelListeners implements Listener {
                 if(Duel.duelPlayers.containsKey(p2)
                         && d1 == Duel.duelPlayers.get(p2)
                         && d1.isActive())
-                    Duel.duelParams.forEach((duelParams) -> duelParams.onEntityDamage(event));
+                    d1.getDuelP().forEach((duelParams) -> duelParams.onEntityDamage(event));
                 else
                     event.setCancelled(true);
                 event.getDamager().remove();

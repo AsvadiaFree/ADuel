@@ -5,3 +5,65 @@ DuelStart: "Le duel commence !"
 DuelCancel: "Le duel est annulé !"
 DuelWin: "Vous avez gagné le duel !"
 DuelLose: "Vous avez perdu le duel !"
+DontReceiveInvite: "Vous n'avez reçu aucune invitation !"
+DuelAlready: "Vous êtes déjà en duel !"
+# Variables:
+# %player%: player who send duel
+DenyInvite: "Le joueur %player% a refusé votre demande en duel !"
+CantDuelWithYou: "Vous ne pouvez pas vous demander en duel !"
+CantSendBecauseDuel: "Ce joueur est déjà en duel !"
+AlreadySendInvite: "Vous avez déjà envoyé une invitation à ce joueur !"
+Invite:
+  # Variables:
+  # %player%: player who send duel
+  Text: ""
+  Accept:
+    # Variables:
+    # %player%: player who send duel
+    Text: ""
+    HoverText: ""
+  Deny:
+    # Variables:
+    # %player%: player who send duel
+    Text: ""
+    HoverText: ""
+# Variables:
+# %player%: player who send duel
+SendInvite: "Vous venez d'envoyé une invitation à %player%"
+GUI:
+  Title: ""
+  Items:
+    On:
+      Title: ""
+      Lore:
+        - ""
+    Off:
+      Title: ""
+      Lore:
+        - ""
+Kits:
+  iron:
+    Title: ""
+    Lore:
+      - ""
+  diamond:
+    Title: ""
+    Lore:
+      - ""
+  nodebuff:
+    Title: ""
+    Lore:
+      - ""
+  archer:
+    Title: ""
+    Lore:
+      - ""
+  gapple:
+    Title: ""
+    Lore:
+      - ""
+
+
+
+
+

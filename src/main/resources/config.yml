@@ -1,0 +1,9 @@
+GUI:
+  Items:
+    On:
+      Slot: 18
+      Material: "GREEN_WOOL"
+    Off:
+      Slot: 22
+      Material: "RED_WOOL"
+

@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum DuelKits {
-    IRON("iron", Material.IRON_CHESTPLATE,
+    IRON("iron", 10, Material.IRON_CHESTPLATE,
             Arrays.asList(
                     new ItemStack(Material.IRON_SWORD),
                     new ItemStack(Material.GOLDEN_APPLE, 4),
@@ -23,7 +23,7 @@ public enum DuelKits {
                     new ItemStack(Material.IRON_CHESTPLATE),
                     new ItemStack(Material.IRON_HELMET)
             }),
-    DIAMOND("diamond", Material.DIAMOND_CHESTPLATE,
+    DIAMOND("diamond", 11, Material.DIAMOND_CHESTPLATE,
             Arrays.asList(
                     new ItemStack(Material.DIAMOND_SWORD),
                     new ItemStack(Material.GOLDEN_APPLE, 8),
@@ -35,7 +35,7 @@ public enum DuelKits {
                     new ItemStack(Material.DIAMOND_CHESTPLATE),
                     new ItemStack(Material.DIAMOND_HELMET)
             }),
-    NO_DEBUFF("nodebuff", Material.POTION,
+    NO_DEBUFF("nodebuff", 19, Material.POTION,
             Arrays.asList(
                     new ItemCreator(Material.DIAMOND_SWORD)
                             .addEnchant(Enchantment.DAMAGE_ALL, 2)
@@ -61,7 +61,7 @@ public enum DuelKits {
                             .addEnchant(Enchantment.DURABILITY, 2)
                             .toItemStack()
             }),
-    ARCHER("archer", Material.BOW,
+    ARCHER("archer", 20, Material.BOW,
             Arrays.asList(
                     new ItemCreator(Material.BOW)
                             .addEnchant(Enchantment.ARROW_INFINITE, 1)
@@ -75,7 +75,7 @@ public enum DuelKits {
                     new ItemStack(Material.LEATHER_CHESTPLATE),
                     new ItemStack(Material.LEATHER_HELMET)
             }),
-    GAPPLE("gapple", Material.GOLDEN_APPLE,
+    GAPPLE("gapple", 28, Material.GOLDEN_APPLE,
             Arrays.asList(
                     new ItemCreator(Material.DIAMOND_SWORD)
                             .addEnchant(Enchantment.DAMAGE_ALL, 5)
@@ -112,12 +112,14 @@ public enum DuelKits {
             });
 
     private final String name;
+    private final int slot;
     private final Material icon;
     private final ItemStack[] items;
     private final ItemStack[] armors;
 
-    DuelKits(String name, Material icon, List<ItemStack> items, ItemStack[] armors) {
+    DuelKits(String name, int slot, Material icon, List<ItemStack> items, ItemStack[] armors) {
         this.name = name;
+        this.slot = slot;
         this.icon = icon;
         this.items = new ItemStack[36];
         items.forEach(itemStack -> this.items[items.indexOf(itemStack)] = itemStack);
@@ -130,6 +132,10 @@ public enum DuelKits {
                             .setPotion(PotionType.INSTANT_HEAL, 2 ,true)
                             .toItemStack();
         }
+    }
+
+    public int getSlot() {
+        return slot;
     }
 
     public String getName() {
