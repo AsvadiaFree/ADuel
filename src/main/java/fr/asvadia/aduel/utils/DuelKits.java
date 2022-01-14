@@ -128,8 +128,8 @@ public enum DuelKits {
         if (this.name.equals("nodebuff")) {
             for (int i = 0; i<36; i++)
                 if (this.items[i] == null)
-                    this.items[i] = new ItemCreator(Material.POTION)
-                            .setPotion(PotionType.INSTANT_HEAL, 2 ,true)
+                    this.items[i] = new ItemCreator(Material.SPLASH_POTION)
+                            .setPotion(PotionType.INSTANT_HEAL, true)
                             .toItemStack();
         }
     }

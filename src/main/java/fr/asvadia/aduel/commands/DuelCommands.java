@@ -56,7 +56,7 @@ public class DuelCommands implements CommandExecutor {
             }
 
             default -> {
-                Player dueLP = Bukkit.getPlayer(args[1]);
+                Player dueLP = Bukkit.getPlayer(args[0]);
                 if (dueLP != null) {
                     if (dueLP != p) {
                         if (!Duel.duelPlayers.containsKey(dueLP)) {
