@@ -35,8 +35,8 @@ public class DuelCommands implements CommandExecutor {
                             && Duel.duelInvitations.get(p).contains(dueLP)) {
                         if (!Duel.duelPlayers.containsKey(p)
                                 && !Duel.duelPlayers.containsKey(dueLP)) {
-                            Duel.duelPlayers.put(p, new Duel(p, dueLP));
-                            Duel.openDuelInv(p);
+                            Duel.duelPlayers.put(dueLP, new Duel(dueLP, p));
+                            Duel.openDuelInv(dueLP);
                         } else p.sendMessage(lang.getString("DuelAlready"));
                     } else p.sendMessage(lang.getString("DontReceiveInvite"));
                 }

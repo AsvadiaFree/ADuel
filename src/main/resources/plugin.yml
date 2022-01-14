@@ -3,5 +3,7 @@ main: fr.asvadia.aduel.Main
 version: 1.0
 author: SkyfightTV
 api-version: 1.17
+depend:
+  - AsvadiaAPI
 commands:
   duel:

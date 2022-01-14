@@ -27,11 +27,15 @@ public class DuelListeners implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDamage(EntityDamageEvent event) {
+        Bukkit.getLogger().info("DAMAGE !");
         if (event.getEntity() instanceof Player p) {
+            Bukkit.getLogger().info("DAMAGE  = PLAYER !");
             if (!Duel.duelPlayers.containsKey(p) || !Duel.getDuelPlayers().get(p).isActive()) {
+                Bukkit.getLogger().info("DAMAGE  = CANCEL !");
                 event.setCancelled(true);
                 return;
             }
+            Bukkit.getLogger().info("DAMAGE  = GOOD !");
             Duel.getDuelPlayers().get(p).getDuelP().forEach(duelParams -> duelParams.onDamage(event));
             if (p.getHealth() - event.getFinalDamage() <= 0.0 && !event.isCancelled())
                 Duel.duelPlayers.get(p).end(Duel.duelPlayers.get(p).getPLAYERS().get(p));
@@ -40,9 +44,11 @@ public class DuelListeners implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
+        Bukkit.getLogger().info("DAMAGEEntity  = GOOD !");
         if (event.getEntity() instanceof Player
                 && (event.getDamager() instanceof Player
                 || event.getDamager() instanceof Arrow)) {
+            Bukkit.getLogger().info("DAMAGEEntity  = Player and player or arrow !");
             Duel d1 = Duel.duelPlayers.get((Player) event.getEntity());
             if (event.getDamager() instanceof Arrow) {
                 Player p2 = Bukkit.getPlayer(event.getDamager().getCustomName());
@@ -55,12 +61,14 @@ public class DuelListeners implements Listener {
                 event.getDamager().remove();
                 return;
             }
+            Bukkit.getLogger().info("DAMAGEEntity  = Player and player !");
             Duel d2 = Duel.getDuelPlayers().get((Player) event.getDamager());
             if(d1 != null
                     && d1 == d2
-                    && d1.isActive())
+                    && d1.isActive()) {
                 Duel.getDuelParams().forEach((duelParams) -> duelParams.onEntityDamage(event));
-            else
+                Bukkit.getLogger().info("DAMAGEEntity  = Player and player EVENT !!");
+            } else
                 event.setCancelled(true);
         } else
             event.setCancelled(true);

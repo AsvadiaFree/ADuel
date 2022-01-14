@@ -34,7 +34,8 @@ public class Duel {
         this.active = false;
         this.kit = DuelKits.values()[0];
         this.PLAYERS = new HashMap<>();
-        this.duelP = new ArrayList<>(duelParams);
+        this.duelP = new ArrayList<>();
+        duelParams.forEach(duelParams1 -> duelP.add(duelParams1.duplicate()));
 
         YamlConfiguration lang = FileManager.getValues().get(Files.Lang);
 
@@ -53,10 +54,10 @@ public class Duel {
                     .title(lang.getString("GUI.Title"))
                     .size(54);
 
-            int slot = config.getInt("GUI.Items.On.Slot");
-            inv.item(slot, new ItemCreator(Material.matchMaterial(config.getString("GUI.Items.On.Material")))
-                    .setName(lang.getString("GUI.Items.On.Title"))
-                    .setLore(lang.getStringList("GUI.Items.On.Lore"))
+            int slot = config.getInt("GUI.Items.SOn.Slot");
+            inv.item(slot, new ItemCreator(Material.matchMaterial(config.getString("GUI.Items.SOn.Material")))
+                    .setName(lang.getString("GUI.Items.SOn.Title"))
+                    .setLore(lang.getStringList("GUI.Items.SOn.Lore"))
                     .toItemStack());
             inv.clickButton(slot, (player, aInventoryGUI, clickType) -> {
                 if (Duel.getDuelPlayers().containsKey(player)
@@ -65,10 +66,10 @@ public class Duel {
                 player.closeInventory();
             });
 
-            slot = config.getInt("GUI.Items.Off.Slot");
-            inv.item(slot, new ItemCreator(Material.matchMaterial(config.getString("GUI.Items.Off.Material")))
-                    .setName(lang.getString("GUI.Items.Off.Title"))
-                    .setLore(lang.getStringList("GUI.Items.Off.Lore"))
+            slot = config.getInt("GUI.Items.SOff.Slot");
+            inv.item(slot, new ItemCreator(Material.matchMaterial(config.getString("GUI.Items.SOff.Material")))
+                    .setName(lang.getString("GUI.Items.SOff.Title"))
+                    .setLore(lang.getStringList("GUI.Items.SOff.Lore"))
                     .toItemStack());
             inv.clickButton(slot, (player, aInventoryGUI, clickType) -> {
                 if (Duel.getDuelPlayers().containsKey(player)

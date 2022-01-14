@@ -17,6 +17,10 @@ public abstract class DuelParams {
     public ItemStack mDisable = new ItemStack(Material.GRAY_WOOL);
     public void onClick(Integer slot, Player player, AInventoryGUI aInventoryGUI, ClickType clickType) {
         active = !active;
+        if (active)
+            aInventoryGUI.getInventory().setItem(slot, mEnable);
+        else
+            aInventoryGUI.getInventory().setItem(slot, mDisable);
         player.openInventory(aInventoryGUI.getInventory());
     }
     public abstract void onDamage(EntityDamageEvent event);
